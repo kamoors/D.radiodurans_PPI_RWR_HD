@@ -16,6 +16,12 @@ Analysis of RecA - N950_giant.sif
 Analysis of UvrC - N900_giant.sif
 Analysis of PprA - N700_giant.sif
 
+Top 20 protein networks:
+
+PprA_RWR_20proteins.sif
+RecA_RWR_20proteins.sif
+UvrC_RWR_20proteins.sif
+
 Supplementary materials 1.rar - contains the tables with final sorted probabilities for the three proteins as source nodes
 Supplementary materials 2.rar - contains the full GO enrichment analysis list for the RecA and UvrC RWR results 
 Supplementary materials 3.txt - contains the additional GO enrichment analysis performed on the lower cluster of the RecA visualization.
