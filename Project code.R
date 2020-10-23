@@ -145,51 +145,96 @@ colnames(UvrC_sorted) <- c('RandomWalk', "HeatDiff")
 
 # Take top 15 proteins from Random walk; Add the rank of these proteins in heat diffusion
 
-Ppra_top15 <- Ppra_sorted[1:15,]
-RecA_top15 <- RecA_sorted[1:15,]
-UvrC_top15 <- UvrC_sorted[1:15,]
+PprA_top20 <- Ppra_sorted[1:20,]
+RecA_top20 <- RecA_sorted[1:20,]
+UvrC_top20 <- UvrC_sorted[1:20,]
 
 
-Ppra_top15$HD_Rank <- a[1:15]        # Rank meaning - row name indicates protein in Random walk 
-RecA_top15$HD_Rank <- b[1:15]        # Rank number indicates which position it is in the Heat Diff rank
-UvrC_top15$HD_Rank <- c[1:15]
+PprA_top20$HD_Rank <- a[1:20]        # Rank meaning - row name indicates protein in Random walk 
+RecA_top20$HD_Rank <- b[1:20]        # Rank number indicates which position it is in the Heat Diff rank
+UvrC_top20$HD_Rank <- c[1:20]
 
 
 
 # get uniprot identifiers for top proteins
-Uni_ppra <- ConvertID(rownames(Pt_prob_sorted_ppra)[1:15],ID_from = "STRING_ID", ID_to = "ID")  
-Uni_recA <- ConvertID(rownames(Pt_prob_sorted_recA)[1:15],ID_from = "STRING_ID", ID_to = "ID")
-Uni_uvrC <- ConvertID(rownames(Pt_prob_sorted_uvrC)[1:15],ID_from = "STRING_ID", ID_to = "ID")
+Uni_ppra <- ConvertID(rownames(Pt_prob_sorted_ppra)[1:20],ID_from = "STRING_ID", ID_to = "ID")  
+Uni_recA <- ConvertID(rownames(Pt_prob_sorted_recA)[1:20],ID_from = "STRING_ID", ID_to = "ID")
+Uni_uvrC <- ConvertID(rownames(Pt_prob_sorted_uvrC)[1:20],ID_from = "STRING_ID", ID_to = "ID")
 
 
 
-Ppra_top15$UniprotID <- gsub("\\_DEIRA*", "", Uni_ppra[,2])
-RecA_top15$UniprotID <- gsub("\\_DEIRA*", "", Uni_recA[,2])
-UvrC_top15$UniprotID <- gsub("\\_DEIRA*", "", Uni_uvrC[,2])
+PprA_top20$UniprotID <- gsub("\\_DEIRA*", "", Uni_ppra[,2])
+RecA_top20$UniprotID <- gsub("\\_DEIRA*", "", Uni_recA[,2])
+UvrC_top20$UniprotID <- gsub("\\_DEIRA*", "", Uni_uvrC[,2])
 
-Ppra_top15$KEGGID <- ConvertID(Uni_ppra[,2], ID_from = "ID", ID_to = "KEGG_ID")[,2]
-RecA_top15$KEGGID <- ConvertID(Uni_recA[,2], ID_from = "ID", ID_to = "KEGG_ID")[,2]
-UvrC_top15$KEGGID <- ConvertID(Uni_uvrC[,2], ID_from = "ID", ID_to = "KEGG_ID")[,2]
-
-
-Ppra_top15$STRINGID <- rownames(Ppra_top15)
-RecA_top15$STRINGID <- rownames(RecA_top15)
-UvrC_top15$STRINGID <- rownames(UvrC_top15)
+PprA_top20$KEGGID <- ConvertID(Uni_ppra[,2], ID_from = "ID", ID_to = "KEGG_ID")[,2]
+RecA_top20$KEGGID <- ConvertID(Uni_recA[,2], ID_from = "ID", ID_to = "KEGG_ID")[,2]
+UvrC_top20$KEGGID <- ConvertID(Uni_uvrC[,2], ID_from = "ID", ID_to = "KEGG_ID")[,2]
 
 
-loadTableData(RecA_top15,data.key.column = "STRINGID", network = "N950_giant")
-loadTableData(UvrC_top15,data.key.column = "STRINGID", network = "N900_giant")
-loadTableData(Ppra_top15,data.key.column = "STRINGID", network = "N700_giant")
+PprA_top20$STRINGID <- rownames(PprA_top20)
+RecA_top20$STRINGID <- rownames(RecA_top20)
+UvrC_top20$STRINGID <- rownames(UvrC_top20)
 
 
-write.table(Ppra_top15$STRINGID, "Ppra_top15_STRING.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
-write.table(rownames(UvrC_top15), "UvrC_top15_STRING.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
-write.table(RecA_top15$STRINGID, "RecA_top15_STRING_bare.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+write.table(PprA_top20$STRINGID, "Ppra_top20_STRING.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+write.table(rownames(UvrC_top20), "UvrC_top20_STRING.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+write.table(RecA_top20$STRINGID, "RecA_top20_STRING.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
 
-ppra_nodes <- selectNodes(rownames(Ppra_top15), network = "N700_giant")
-createSubnetwork(ppra_nodes, network = "N700_giant")
+write.table(PprA_top20$UniprotID, "Ppra_top20_uni.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+write.table(UvrC_top20$UniprotID, "UvrC_top20_uni.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+write.table(RecA_top20$UniprotID, "RecA_top20_uni.txt", quote = FALSE, row.names = FALSE, col.names = FALSE)
+
+
+
+# Load the RWR and UNiprot IDs into Cytoscape
+
+loadTableData(RecA_top20,data.key.column = "STRINGID", network = "N950_giant")
+loadTableData(UvrC_top20,data.key.column = "STRINGID", network = "N900_giant")
+loadTableData(PprA_top20,data.key.column = "STRINGID", network = "N700_giant")
+
+
+
+# Table 1 in report
+
+All_three_rank <- as.data.frame(PprA_top20$UniprotID, col.names = "PprA_Uniprot")
+All_three_rank$PprA_HDrank <- PprA_top20$HD_Rank
+
+All_three_rank$RecA_uniprot <- RecA_top20$UniprotID
+All_three_rank$RecA_HDrank <- RecA_top20$HD_Rank
+
+All_three_rank$UvrC_uniprot <- UvrC_top20$UniprotID
+All_three_rank$UvrC_HDrank <- UvrC_top20$HD_Rank
+
+write.table(All_three_rank, "All_three_rank.txt")
+
+# Supplementary materials 1 
+
+All_probabilities_PprA <- as.data.frame(Pt_prob_sorted_ppra, col.names = "RWR")
+All_probabilities_PprA$HD <- ht_prob_ppra_sorted
+
+All_probabilities_RecA <- as.data.frame(Pt_prob_sorted_recA, col.names = "RWR")
+All_probabilities_RecA$HD <- ht_prob_recA_sorted
+
+All_probabilities_UvrC <- as.data.frame(Pt_prob_sorted_uvrC, col.names = "RWR")
+All_probabilities_UvrC$HD <- ht_prob_uvrC_sorted
+
+
+colnames(All_probabilities_PprA) <- c("RWR", "HD")
+colnames(All_probabilities_RecA) <- c("RWR", "HD")
+colnames(All_probabilities_UvrC) <- c("RWR", "HD")
+
+
+write.table(All_probabilities_PprA, "All_probabilities_PprA.txt")
+write.table(All_probabilities_RecA, "All_probabilities_RecA.txt")
+write.table(All_probabilities_UvrC, "All_probabilities_UvrC.txt")
+
+
 ############################
 
+############################
+
+# Examine the differencess in probabilities when changing the restart probability
 
 looped_pt <- as.data.frame(rep(0, length(p0)))
 for (i in 1:9){
@@ -221,6 +266,8 @@ for (i in 2:9){
 
 
 ##
+
+# Plot the top 15 results of the RWR 
 #PprA
 plot(Pt_prob_sorted_ppra[1:15,], type = "p", col = 1, 
      main = "Ppra RWR and HD probabilities",
@@ -237,8 +284,8 @@ plot(Pt_prob_sorted_recA[1:15,], type = "p", col = 1,
      xlab = "Rank",
      ylab = "Probability",
      ylim = c(0,0.9))
-text(Pt_prob_sorted_recA[1:4,], labels = RecA_top15$UniprotID[1:4],cex=0.9, font=2, pos=1)
-text(x = 5, y = 0.074480969, labels = RecA_top15$UniprotID[5],cex=0.9, font=2, pos=3)
+text(Pt_prob_sorted_recA[1:4,], labels = RecA_top20$UniprotID[1:4],cex=0.9, font=2, pos=1)
+text(x = 5, y = 0.074480969, labels = RecA_top20$UniprotID[5],cex=0.9, font=2, pos=3)
 points(ht_prob_recA_sorted[1:15,], col = 2)
 legend(x = "topright",legend = c("RWR", "HD"), col = 1:2, fill = 1:2)
 
@@ -255,7 +302,9 @@ legend(x = "topright",legend = c("R Walk", "H Diff"), col = 1:2, fill = 1:2)
 ################ Plot data
 
 # Decide on color palette
-palf <- colorRampPalette(c("dark red","gray80"))
+palf <- colorRampPalette(c("dark red"))
+palg <- colorRampPalette(c("blue"))
+palh <- colorRampPalette(c("#FF00FF"))
 
 # Plot all probabilities
 plot(Pt_prob_sorted_ppra, main = "Distribution of stationary probabilities; PprA", xlab = "Probability")
@@ -265,30 +314,36 @@ plot(Pt_prob_sorted_uvrC, main = "Distribution of stationary probabilities; UvrC
 
 # Plot head of each random walk outcome
 
+
+par(mfrow = c(3,1))
+
 plot(Pt_prob_sorted_ppra[1:30,], 
-     main = "Top 30 Distribution of stationary probabilities; PprA", 
+     main = "RWR PprA Stationary probabilities for top 30 proteins", 
      ylab = "Probability",
      xlab = "Rank", 
-     col = palf(30), 
-     type = "b")
-
+     col = palf(30),
+     pch = 1,
+     type = "p"
+     )
+abline(v=4, col = "red", lty = 2)
 plot(Pt_prob_sorted_recA[1:30,], 
-     main = "Top 30 Distribution of stationary probabilities; RecA", 
-     ylab = "Probability",
-     xlab = "Rank", 
-     col = palf(30), 
-     type = "b")
+      main = "RWR RecA Stationary probabilities for top 30 proteins", 
+      ylab = "Probability",
+      xlab = "Rank", 
+      col = palg(30),
+      pch = 2,
+      type = "p")
+abline(v=10, col = "red", lty = 2)
 plot(Pt_prob_sorted_uvrC[1:30,], 
-     main = "Top 30 Distribution of stationary probabilities; UvrC", 
-     ylab = "Probability",
-     xlab = "Rank", 
-     col = palf(30), 
-     type = "b")
+      main = "RWR UvrC Stationary probabilities for top 30 proteins", 
+      ylab = "Probability",
+      xlab = "Rank", 
+      col = palh(30), 
+      pch = 3,
+      type = "p")
+abline(v=19,col = "red", lty = 2)
+legend(x = "center",legend = c("PprA", "RecA", "UvrC"), col = c("dark red", "blue", "#FF00FF"), pch = 1:3)
 
-
-
-
-write.table(Pt_prob_sorted_ppra[1:33], "")
 
 
 
